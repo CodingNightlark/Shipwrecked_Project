@@ -3,41 +3,95 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 import java.util.*;
+import java.io.File;
 
 public class GameLauncher extends JFrame {
     private Set<String> unlockedGames;
     private JPanel gamesPanel;
     private static final int WINS_TO_UNLOCK = 2; // Best of three means 2 wins
 
+    // Fun color scheme
+    private static final Color BACKGROUND_COLOR = new Color(108, 99, 255);  // Playful purple
+    private static final Color BUTTON_COLOR = new Color(255, 122, 89);      // Coral
+    private static final Color BUTTON_HOVER_COLOR = new Color(255, 145, 118); // Light coral
+    private static final Color TEXT_COLOR = Color.WHITE;
+    private static final Color TITLE_COLOR = Color.BLACK;
+    private static final Color LOCKED_COLOR = new Color(180, 180, 180);     // Gray for locked games
+
+    // Custom fonts
+    private Font customFont;
+    private Font titleFont;
+    private Font buttonFont;
+    private Font statusFont;
+
     public GameLauncher() {
         setTitle("Game Center");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
+        setMinimumSize(new Dimension(400, 500));
+
+        // Initialize custom fonts
+        try {
+            // Load custom font
+            customFont = Font.createFont(Font.TRUETYPE_FONT, 
+                new File("resources/ComicNeue-Bold.ttf"));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+            
+            // Create different sizes
+            titleFont = customFont.deriveFont(Font.BOLD, 36f);
+            buttonFont = customFont.deriveFont(Font.BOLD, 18f);
+            statusFont = customFont.deriveFont(Font.PLAIN, 14f);
+        } catch (Exception e) {
+            // Fallback fonts if custom font fails to load
+            titleFont = new Font("Comic Sans MS", Font.BOLD, 36);
+            buttonFont = new Font("Comic Sans MS", Font.BOLD, 18);
+            statusFont = new Font("Comic Sans MS", Font.PLAIN, 14);
+        }
 
         unlockedGames = new HashSet<>();
-        // For testing: unlock all games
         unlockedGames.add("Tic-Tac-Toe");
         unlockedGames.add("Dinosaur Game");
         unlockedGames.add("Chess");
 
-        // Create main panel
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        // Create main panel with gradient background
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int w = getWidth();
+                int h = getHeight();
+                GradientPaint gp = new GradientPaint(
+                    0, 0, BACKGROUND_COLOR,
+                    w, h, new Color(147, 141, 255)
+                );
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        mainPanel.setBackground(new Color(240, 240, 240));
 
-        // Create title label
+        // Create title label with black color
         JLabel titleLabel = new JLabel("Game Center", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(titleFont);
+        titleLabel.setForeground(TITLE_COLOR);
+        titleLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Create games panel
-        gamesPanel = new JPanel(new GridLayout(0, 1, 10, 10));
-        gamesPanel.setBackground(new Color(240, 240, 240));
+        // Create games panel with better layout for resizing
+        gamesPanel = new JPanel();
+        gamesPanel.setLayout(new BoxLayout(gamesPanel, BoxLayout.Y_AXIS));
+        gamesPanel.setOpaque(false);
         updateGamesPanel();
 
         // Add scroll pane for games
         JScrollPane scrollPane = new JScrollPane(gamesPanel);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(mainPanel);
@@ -48,39 +102,90 @@ public class GameLauncher extends JFrame {
 
     private void updateGamesPanel() {
         gamesPanel.removeAll();
-
-        // Add all game buttons (all unlocked for testing)
+        gamesPanel.add(Box.createVerticalStrut(10));
         addGameButton("Tic-Tac-Toe", true, () -> launchTicTacToe());
+        gamesPanel.add(Box.createVerticalStrut(15));
         addGameButton("Dinosaur Game", true, () -> launchDinoGame());
+        gamesPanel.add(Box.createVerticalStrut(15));
         addGameButton("Chess", true, () -> launchChess());
-
+        gamesPanel.add(Box.createVerticalStrut(10));
         gamesPanel.revalidate();
         gamesPanel.repaint();
     }
 
     private void addGameButton(String gameName, boolean unlocked, Runnable action) {
-        JButton button = new JButton();
-        button.setLayout(new BorderLayout());
-        
-        JLabel nameLabel = new JLabel(gameName);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        nameLabel.setBorder(new EmptyBorder(5, 10, 5, 10));
-        
-        // For testing: all games show as available
-        JLabel statusLabel = new JLabel("Available");
-        statusLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        statusLabel.setBorder(new EmptyBorder(0, 10, 5, 10));
-        statusLabel.setForeground(new Color(46, 204, 113));
+        JPanel buttonPanel = new JPanel(new BorderLayout(5, 5));
+        buttonPanel.setOpaque(false);
+        buttonPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
-        button.add(nameLabel, BorderLayout.NORTH);
-        button.add(statusLabel, BorderLayout.SOUTH);
-        
-        button.setEnabled(true); // All buttons enabled for testing
-        button.setPreferredSize(new Dimension(350, 60));
+        // Create modern button with hover effect
+        JButton button = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                if (getModel().isPressed()) {
+                    g2d.setColor(BUTTON_HOVER_COLOR.darker());
+                } else if (getModel().isRollover()) {
+                    g2d.setColor(BUTTON_HOVER_COLOR);
+                } else {
+                    g2d.setColor(BUTTON_COLOR);
+                }
+                
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                
+                // Add a subtle shine effect
+                GradientPaint shine = new GradientPaint(
+                    0, 0, new Color(255, 255, 255, 50),
+                    0, getHeight(), new Color(255, 255, 255, 0)
+                );
+                g2d.setPaint(shine);
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+            }
+        };
+        button.setLayout(new BorderLayout());
+        button.setBorder(new EmptyBorder(15, 20, 15, 20));
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
         button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Game name with icon
+        JLabel nameLabel = new JLabel(gameName);
+        nameLabel.setFont(buttonFont);
+        nameLabel.setForeground(TEXT_COLOR);
+        
+        // Status with icon
+        JLabel statusLabel = new JLabel("Available");
+        statusLabel.setFont(statusFont);
+        statusLabel.setForeground(TEXT_COLOR);
+        
+        // Add game icon based on the game type
+        String iconText = switch (gameName) {
+            case "Tic-Tac-Toe" -> "❌⭕";
+            case "Dinosaur Game" -> "🦖";
+            case "Chess" -> "♟️";
+            default -> "🎮";
+        };
+        JLabel iconLabel = new JLabel(iconText);
+        iconLabel.setFont(buttonFont);
+        
+        // Layout the components
+        JPanel textPanel = new JPanel(new GridLayout(2, 1));
+        textPanel.setOpaque(false);
+        textPanel.add(nameLabel);
+        textPanel.add(statusLabel);
+        
+        button.add(iconLabel, BorderLayout.WEST);
+        button.add(textPanel, BorderLayout.CENTER);
+        
+        button.setEnabled(true);
         button.addActionListener(e -> action.run());
         
-        gamesPanel.add(button);
+        buttonPanel.add(button, BorderLayout.CENTER);
+        gamesPanel.add(buttonPanel);
     }
 
     private void launchTicTacToe() {
