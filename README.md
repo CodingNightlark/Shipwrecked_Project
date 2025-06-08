@@ -1,64 +1,67 @@
 # Game Center
 
-A collection of classic games implemented in Java with a graphical user interface. Start with Tic-Tac-Toe and unlock more games as you win!
+A web-based game center featuring Chess and Tic-Tac-Toe games built with Spring Boot.
 
-## Available Games
+## Features
 
-### Tic-Tac-Toe
-- Clean and modern user interface
-- Player vs Computer gameplay
-- Visual feedback for game status
-- Score tracking
-- Win 2 games to unlock the Dinosaur Game!
+- Tic-Tac-Toe game with AI opponent
+- Chess game with move validation
+- Modern, responsive UI
+- Session-based game state management
 
-### Dinosaur Game (Unlockable)
-- Simple and addictive gameplay
-- Jump over obstacles
-- Score based on survival time
-- Unlock by winning Tic-Tac-Toe
+## Prerequisites
 
-### Chess (Unlockable)
-- Classic chess implementation
-- Player vs Computer
-- Unicode chess pieces
-- Simple AI opponent
-- Unlock by mastering previous games
+- Java 17 or higher
+- Maven 3.6 or higher
 
-## How to Run
-1. Make sure you have Java installed on your system
-2. Compile the Java files:
+## Local Development
+
+1. Clone the repository
+2. Build the project:
    ```bash
-   javac *.java
+   mvn clean install
    ```
-3. Run the game center:
+3. Run the application:
    ```bash
-   java GameLauncher
+   mvn spring-boot:run
    ```
+4. Visit `http://localhost:8081` in your browser
 
-## How to Play
+## Deployment Options
 
-### Tic-Tac-Toe
-1. Click on any empty cell to make your move
-2. The computer will automatically make its move
-3. Try to get three X's in a row to win!
-4. Win 2 games to unlock the Dinosaur Game
+### Option 1: Deploy to Render (Recommended)
 
-### Dinosaur Game
-1. Press SPACE to jump
-2. Avoid the obstacles
-3. Try to get the highest score
-4. Press R to restart when game is over
-5. Press ESC to return to menu
+1. Fork this repository to your GitHub account
+2. Create a new Web Service on Render
+3. Connect your GitHub repository
+4. Use the following settings:
+   - Build Command: `mvn clean install`
+   - Start Command: `java -jar target/gamecenter-1.0-SNAPSHOT.jar`
+   - Select Java 17
+5. Click "Create Web Service"
 
-### Chess
-1. Click a piece to select it
-2. Click a valid square to move
-3. Play as white against the computer
-4. Computer plays black automatically
-5. Return to menu anytime with the back button
+### Option 2: Deploy to Railway
 
-## Game Progression
-1. Start with Tic-Tac-Toe
-2. Win 2 games to unlock the Dinosaur Game
-3. Keep playing to unlock Chess
-4. Try to master all games! 
+1. Fork this repository
+2. Create a new project on Railway
+3. Add your GitHub repository
+4. Railway will automatically detect the Java configuration
+5. Deploy!
+
+### Option 3: Manual VPS Deployment
+
+1. SSH into your server
+2. Install Java 17 and Maven
+3. Clone the repository
+4. Build: `mvn clean install`
+5. Run: `java -jar target/gamecenter-1.0-SNAPSHOT.jar`
+6. (Optional) Set up Nginx as a reverse proxy
+
+## Environment Variables
+
+- `PORT`: Port number (default: 8081)
+- `JAVA_OPTS`: Java runtime options
+
+## Support
+
+For issues or questions, please open a GitHub issue. 
