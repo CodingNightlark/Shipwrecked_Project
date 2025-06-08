@@ -29,7 +29,7 @@ A web-based game center featuring Chess and Tic-Tac-Toe games built with Spring 
 
 ## Deployment Options
 
-### Option 1: Deploy to Render (Recommended)
+### Option 1: Deploy to Render (it's mostly easy and free)
 
 1. Fork this repository to your GitHub account
 2. Create a new Web Service on Render
@@ -40,15 +40,7 @@ A web-based game center featuring Chess and Tic-Tac-Toe games built with Spring 
    - Select Java 17
 5. Click "Create Web Service"
 
-### Option 2: Deploy to Railway
-
-1. Fork this repository
-2. Create a new project on Railway
-3. Add your GitHub repository
-4. Railway will automatically detect the Java configuration
-5. Deploy!
-
-### Option 3: Manual VPS Deployment
+### Option 2: Manual VPS Deployment
 
 1. SSH into your server
 2. Install Java 17 and Maven
