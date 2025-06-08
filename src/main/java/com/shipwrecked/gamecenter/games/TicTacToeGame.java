@@ -1,3 +1,5 @@
+package com.shipwrecked.gamecenter.games;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,17 +8,18 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 import java.awt.Point;
+import com.shipwrecked.gamecenter.GameLauncher;
 
 public class TicTacToeGame extends JFrame {
     private JButton[][] buttons;
     private JLabel statusLabel;
-    private JLabel scoreLabel;
+    private JLabel scoreLabel; 
     private int playerScore = 0;
     private int computerScore = 0;
     private static final String PLAYER_SYMBOL = "X";
-    private static final String COMPUTER_SYMBOL = "O";
+    private static final String COMPUTER_SYMBOL = "O"; 
     private boolean gameOver;
-    private GameLauncher launcher;
+    private GameLauncher launcher;  
     private JButton backButton;
 
     // Fun color scheme

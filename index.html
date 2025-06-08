@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dino Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+            font-family: Arial, sans-serif;
+        }
+        #gameContainer {
+            position: relative;
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        #score, #highScore {
+            position: absolute;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        #score {
+            right: 20px;
+            top: 20px;
+        }
+        #highScore {
+            left: 50%;
+            transform: translateX(-50%);
+            top: 20px;
+        }
+        .instructions {
+            margin-top: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="score">Score: 0</div>
+        <div id="highScore">High Score: 0</div>
+        <div class="instructions">
+            Press SPACE to jump<br>
+            Press DOWN to duck
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html> 

@@ -1,3 +1,5 @@
+package com.shipwrecked.gamecenter.games;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -5,12 +7,13 @@ import javax.swing.border.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import com.shipwrecked.gamecenter.GameLauncher;
 
 public class ChessGame extends JFrame {
     private JButton[][] squares;
     private JPanel boardPanel;
     private JLabel statusLabel;
-    private String[][] board;   
+    private String[][] board;
     private boolean[][] hasMoved;
     private boolean isWhiteTurn;
     private String lastMovedPiece;

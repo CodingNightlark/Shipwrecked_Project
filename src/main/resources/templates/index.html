@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Game Center</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .game-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .game-description {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .locked::after {
+            content: "🔒";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Game Center</h1>
+        
+        <div class="game-grid">
+            <a href="/tictactoe" class="game-card">
+                <div class="game-icon">❌⭕</div>
+                <div class="game-title">Tic-Tac-Toe</div>
+                <div class="game-description">Classic game of X's and O's. Play against the computer!</div>
+            </a>
+            
+            <a href="/chess" class="game-card">
+                <div class="game-icon">♟️</div>
+                <div class="game-title">Chess</div>
+                <div class="game-description">Strategic board game against a computer opponent.</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

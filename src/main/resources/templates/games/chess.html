@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess - Game Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --light-square: #f0d9b5;
+            --dark-square: #b58863;
+            --selected-square: #baca44;
+            --valid-move: #d6d6bd;
+            --capture-move: #ca4444;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 1px;
+            max-width: 640px;
+            margin: 0 auto;
+            border: 2px solid #333;
+            background: #333;
+        }
+        
+        .square {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        
+        .square.light {
+            background-color: var(--light-square);
+        }
+        
+        .square.dark {
+            background-color: var(--dark-square);
+        }
+        
+        .square.selected {
+            background-color: var(--selected-square);
+        }
+        
+        .square.valid-move {
+            position: relative;
+        }
+        
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+        }
+        
+        .square.capture-move::after {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border: 3px solid rgba(202, 68, 68, 0.5);
+            border-radius: 50%;
+        }
+        
+        .game-status {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .board-wrapper {
+            padding: 20px;
+            background: #312e2b;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .coordinates {
+            color: #b58863;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .rank-labels {
+            position: absolute;
+            left: -25px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        
+        .file-labels {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Game Center</a>
+            <span class="navbar-text">Chess</span>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="game-status" id="gameStatus">White's turn</div>
+        
+        <div class="board-wrapper position-relative">
+            <div class="rank-labels coordinates">
+                <div>8</div>
+                <div>7</div>
+                <div>6</div>
+                <div>5</div>
+                <div>4</div>
+                <div>3</div>
+                <div>2</div>
+                <div>1</div>
+            </div>
+            <div class="game-board" id="chessBoard"></div>
+            <div class="file-labels coordinates">
+                <div>a</div>
+                <div>b</div>
+                <div>c</div>
+                <div>d</div>
+                <div>e</div>
+                <div>f</div>
+                <div>g</div>
+                <div>h</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="resetButton" class="btn btn-primary">New Game</button>
+            <button id="undoButton" class="btn btn-secondary">Undo Move</button>
+            <a href="/" class="btn btn-outline-secondary">Back to Menu</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/static/js/chess.js}"></script>
+</body>
+</html> 

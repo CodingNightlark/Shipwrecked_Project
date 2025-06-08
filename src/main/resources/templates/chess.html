@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chess Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: white;
+        }
+
+        #game-container {
+            position: relative;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #chess-board {
+            width: 640px;
+            height: 640px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border: 2px solid #444;
+            background-color: #f0d9b5;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .square {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            font-size: 48px;
+            transition: background-color 0.2s;
+        }
+
+        .square.light {
+            background-color: #f0d9b5;
+        }
+
+        .square.dark {
+            background-color: #b58863;
+        }
+
+        .square.selected {
+            background-color: rgba(255, 255, 0, 0.3) !important;
+        }
+
+        .square.valid-move {
+            position: relative;
+        }
+
+        .square.valid-move::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .square.last-move {
+            background-color: rgba(155, 199, 0, 0.41) !important;
+        }
+
+        .piece {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            transition: all 0.2s ease-in-out;
+            cursor: grab;
+            font-size: 54px;
+            line-height: 60px;
+            text-align: center;
+            user-select: none;
+            z-index: 2;
+        }
+
+        .piece.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+            z-index: 1000;
+        }
+
+        .piece.white {
+            color: #fff;
+            text-shadow: 
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
+        }
+
+        .piece.black {
+            color: #000;
+        }
+
+        .coordinates {
+            position: absolute;
+            font-size: 12px;
+            color: #666;
+            pointer-events: none;
+        }
+
+        .file-coord {
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .rank-coord {
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 80px);
+            gap: 0;
+            border: 15px solid #404040;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        #game-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #turn-indicator {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #move-history {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ddd;
+        }
+
+        .move-entry {
+            margin: 5px 0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .move-entry:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #666;
+        }
+
+        #game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        #winner-text {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        #new-game-button {
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #new-game-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Add responsive design */
+        @media (max-width: 700px) {
+            #chess-board {
+                width: 320px;
+                height: 320px;
+            }
+
+            .square {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+            }
+
+            .piece {
+                width: 30px;
+                height: 30px;
+                font-size: 28px;
+                line-height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">← Back to Games</a>
+    
+    <div id="game-container">
+        <div id="chess-board"></div>
+        
+        <div id="game-info">
+            <div id="turn-indicator">White's Turn</div>
+            <div id="move-history"></div>
+        </div>
+    </div>
+
+    <div id="game-over">
+        <h2 id="winner-text"></h2>
+        <button id="new-game-button" class="button primary">New Game</button>
+    </div>
+
+    <script th:inline="javascript">
+        // Get initial game state from Thymeleaf
+        let initialGame = /*[[${game}]]*/ {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('chess-board');
+            const turnIndicator = document.getElementById('turn-indicator');
+            let draggedPiece = null;
+            let draggedPieceLocation = null;
+
+            function createBoard() {
+                board.innerHTML = '';
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                        square.dataset.row = row;
+                        square.dataset.col = col;
+
+                        // Add coordinates
+                        if (col === 0) {
+                            const rankCoord = document.createElement('div');
+                            rankCoord.className = 'coordinates rank-coord';
+                            rankCoord.textContent = 8 - row;
+                            square.appendChild(rankCoord);
+                        }
+                        if (row === 7) {
+                            const fileCoord = document.createElement('div');
+                            fileCoord.className = 'coordinates file-coord';
+                            fileCoord.textContent = String.fromCharCode(97 + col);
+                            square.appendChild(fileCoord);
+                        }
+
+                        square.addEventListener('dragover', handleDragOver);
+                        square.addEventListener('drop', handleDrop);
+                        board.appendChild(square);
+                    }
+                }
+                updateBoard();
+            }
+
+            function updateBoard() {
+                document.querySelectorAll('.square').forEach(square => {
+                    const row = parseInt(square.dataset.row);
+                    const col = parseInt(square.dataset.col);
+                    const piece = initialGame.board[row][col];
+
+                    // Clear existing piece
+                    const existingPiece = square.querySelector('.piece');
+                    if (existingPiece) {
+                        square.removeChild(existingPiece);
+                    }
+
+                    // Add coordinates back if needed
+                    if (col === 0 && !square.querySelector('.rank-coord')) {
+                        const rankCoord = document.createElement('div');
+                        rankCoord.className = 'coordinates rank-coord';
+                        rankCoord.textContent = 8 - row;
+                        square.appendChild(rankCoord);
+                    }
+                    if (row === 7 && !square.querySelector('.file-coord')) {
+                        const fileCoord = document.createElement('div');
+                        fileCoord.className = 'coordinates file-coord';
+                        fileCoord.textContent = String.fromCharCode(97 + col);
+                        square.appendChild(fileCoord);
+                    }
+
+                    if (piece) {
+                        const pieceDiv = document.createElement('div');
+                        pieceDiv.className = `piece ${piece.white ? 'white' : 'black'}`;
+                        pieceDiv.textContent = getPieceSymbol(piece);
+                        pieceDiv.draggable = true;
+                        pieceDiv.addEventListener('dragstart', handleDragStart);
+                        pieceDiv.addEventListener('dragend', handleDragEnd);
+                        square.appendChild(pieceDiv);
+                    }
+                });
+
+                turnIndicator.textContent = `${initialGame.whiteTurn ? 'White' : 'Black'}'s Turn`;
+
+                if (initialGame.status === 'FINISHED') {
+                    showGameOver(initialGame.winner);
+                }
+            }
+
+            function getPieceSymbol(piece) {
+                const symbols = {
+                    'KING': { true: '♔', false: '♚' },
+                    'QUEEN': { true: '♕', false: '♛' },
+                    'ROOK': { true: '♖', false: '♜' },
+                    'BISHOP': { true: '♗', false: '♝' },
+                    'KNIGHT': { true: '♘', false: '♞' },
+                    'PAWN': { true: '♙', false: '♟' }
+                };
+                return symbols[piece.type][piece.white];
+            }
+
+            function handleDragStart(e) {
+                const piece = e.target;
+                const square = piece.parentElement;
+                const row = parseInt(square.dataset.row);
+                const col = parseInt(square.dataset.col);
+                const pieceObj = initialGame.board[row][col];
+
+                // Only allow dragging if it's the piece's turn
+                if (pieceObj && pieceObj.white === initialGame.whiteTurn) {
+                    draggedPiece = piece;
+                    draggedPieceLocation = { row, col };
+                    piece.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+                    e.dataTransfer.effectAllowed = 'move';
+                } else {
+                    e.preventDefault();
+                }
+            }
+
+            function handleDragEnd(e) {
+                if (draggedPiece) {
+                    draggedPiece.classList.remove('dragging');
+                    draggedPiece = null;
+                    draggedPieceLocation = null;
+                }
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                const square = e.target.closest('.square');
+                if (!square || !draggedPiece || !draggedPieceLocation) return;
+
+                const toRow = parseInt(square.dataset.row);
+                const toCol = parseInt(square.dataset.col);
+
+                // Make move
+                fetch('/chess/move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fromRow: draggedPieceLocation.row,
+                        fromCol: draggedPieceLocation.col,
+                        toRow: toRow,
+                        toCol: toCol
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Invalid move');
+                    }
+                    return response.json();
+                })
+                .then(updatedGame => {
+                    initialGame = updatedGame;
+                    updateBoard();
+                })
+                .catch(error => {
+                    console.error('Error making move:', error);
+                    // Revert the move visually
+                    updateBoard();
+                })
+                .finally(() => {
+                    draggedPiece = null;
+                    draggedPieceLocation = null;
+                });
+            }
+
+            function showGameOver(winner) {
+                const gameOver = document.getElementById('game-over');
+                const winnerText = document.getElementById('winner-text');
+                winnerText.textContent = `${winner} wins!`;
+                gameOver.style.display = 'block';
+
+                // Add event listener to new game button
+                const newGameButton = document.getElementById('new-game-button');
+                newGameButton.onclick = () => {
+                    resetGame();
+                    gameOver.style.display = 'none';
+                };
+            }
+
+            function resetGame() {
+                fetch('/chess/reset', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(newGame => {
+                    initialGame = newGame;
+                    updateBoard();
+                    const gameOver = document.getElementById('game-over');
+                    gameOver.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error resetting game:', error);
+                });
+            }
+
+            // Initialize the game
+            createBoard();
+
+            // Add reset button event listener
+            document.getElementById('reset-button').addEventListener('click', resetGame);
+        });
+    </script>
+</body>
+</html> 

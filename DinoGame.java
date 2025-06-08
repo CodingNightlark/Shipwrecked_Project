@@ -5,7 +5,7 @@ import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.DataOutputStream;  
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,7 +32,7 @@ public class DinoGame extends JFrame {
     private static final Color GROUND_COLOR = new Color(200, 230, 180); // Lighter, more pleasant green
     private static final Color DINO_COLOR = new Color(50, 205, 50);
     private static final Color BIRD_COLOR = new Color(255, 69, 0);
-    private static final Color OBSTACLE_COLOR = new Color(34, 139, 34);
+    private static final Color OBSTACLE_COLOR = new Color(34, 139, 34); 
     private static final Color SCORE_COLOR = new Color(44, 62, 80);
     private static final Font SCORE_FONT = new Font("Arial", Font.BOLD, 24);
     private static final Font GAME_OVER_FONT = new Font("Arial", Font.BOLD, 48);
@@ -659,7 +659,7 @@ public class DinoGame extends JFrame {
                         highScore = in.readInt();
                     }
                 }
-            }
+            }  
         } catch (IOException e) {
             System.err.println("Error loading high score: " + e.getMessage());
         }
