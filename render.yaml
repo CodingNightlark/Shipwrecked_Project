@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: game-center
+    env: docker
+    buildCommand: docker build -t game-center .
+    startCommand: docker run -p 8081:8081 game-center
+    envVars:
+      - key: PORT
+        value: 8081
+    healthCheckPath: /
+    autoDeploy: true 
